@@ -20,11 +20,16 @@ const leadSchema = new mongoose.Schema({
   payment:String,
   balPayment:String,
   clientstatus:String,
-  services: [{
-    name: String,
-    buydate: Date,
-    expirydate: Date,
-     default: [] }],
+  services: {
+    type: [
+      {
+        name: { type: String, default: 'test' },
+        buydate: { type: Date, default: Date.now }, // Set default to current date
+        expirydate: { type: Date, default: () => new Date('2025-12-31') } // Set default to a specific date
+      }
+    ],
+    default: []
+  },
   lastdate:String,
   designation:String,
   ownername:String,
