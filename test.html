@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lead Generation Form</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+        }
+        input, select, textarea {
+            width: 100%;
+            padding: 8px;
+            box-sizing: border-box;
+        }
+        button {
+            padding: 10px 20px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+    </style>
+</head>
+<body>
+    <h1>Lead Generation Form</h1>
+    <form id="leadForm">
+        <div class="form-group">
+            <label for="name">Name:</label>
+            <input type="text" id="name" name="name" required>
+        </div>
+        <div class="form-group">
+            <label for="personname">Person Name:</label>
+            <input type="text" id="personname" name="personname" required>
+        </div>
+        <div class="form-group">
+            <label for="email">Email:</label>
+            <input type="email" id="email" name="email" required>
+        </div>
+        <div class="form-group">
+            <label for="contact">Contact:</label>
+            <input type="text" id="contact" name="contact">
+        </div>
+        <div class="form-group">
+            <label for="address">Address:</label>
+            <input type="text" id="address" name="address">
+        </div>
+        <div class="form-group">
+            <label for="description">Description:</label>
+            <textarea id="description" name="description"></textarea>
+        </div>
+        <div class="form-group">
+            <label for="progress">Progress:</label>
+            <input type="text" id="progress" name="progress">
+        </div>
+        <div class="form-group">
+            <label for="date">Date:</label>
+            <input type="date" id="date" name="date">
+        </div>
+        <div class="form-group">
+            <label for="comment">Comment:</label>
+            <textarea id="comment" name="comment"></textarea>
+        </div>
+        <div class="form-group">
+            <label for="payment">Payment:</label>
+            <input type="text" id="payment" name="payment">
+        </div>
+        <div class="form-group">
+            <label for="balPayment">Balance Payment:</label>
+            <input type="text" id="balPayment" name="balPayment">
+        </div>
+        <div class="form-group">
+            <label for="clientstatus">Client Status:</label>
+            <input type="text" id="clientstatus" name="clientstatus">
+        </div>
+        <div class="form-group">
+            <label for="services">Services:</label>
+            <div id="services-container">
+                <div class="service-group">
+                    <input type="text" name="services[0][name]" placeholder="Service Name" required>
+                    <input type="date" name="services[0][buydate]" placeholder="Buy Date" required>
+                    <input type="date" name="services[0][expirydate]" placeholder="Expiry Date" required>
+                </div>
+            </div>
+            <button type="button" id="addService">Add Service</button>
+        </div>
+        <div class="form-group">
+            <label for="lastdate">Last Date:</label>
+            <input type="date" id="lastdate" name="lastdate">
+        </div>
+        <div class="form-group">
+            <label for="designation">Designation:</label>
+            <input type="text" id="designation" name="designation">
+        </div>
+        <div class="form-group">
+            <label for="ownername">Owner Name:</label>
+            <input type="text" id="ownername" name="ownername">
+        </div>
+        <div class="form-group">
+            <label for="ownerno">Owner Contact:</label>
+            <input type="text" id="ownerno" name="ownerno">
+        </div>
+        <div class="form-group">
+            <label for="owneremail">Owner Email:</label>
+            <input type="email" id="owneremail" name="owneremail">
+        </div>
+        <div class="form-group">
+            <label for="domain">Domain:</label>
+            <input type="text" id="domain" name="domain">
+        </div>
+        <div class="form-group">
+            <label for="domainpurchaseby">Domain Purchased By:</label>
+            <input type="text" id="domainpurchaseby" name="domainpurchaseby">
+        </div>
+        <div class="form-group">
+            <label for="domaindate">Domain Date:</label>
+            <input type="date" id="domaindate" name="domaindate">
+        </div>
+        <div class="form-group">
+            <label for="domainrenew">Domain Renewal:</label>
+            <input type="date" id="domainrenew" name="domainrenew">
+        </div>
+        <div class="form-group">
+            <label for="domainid">Domain ID:</label>
+            <input type="text" id="domainid" name="domainid">
+        </div>
+        <div class="form-group">
+            <label for="domainpass">Domain Password:</label>
+            <input type="password" id="domainpass" name="domainpass">
+        </div>
+        <div class="form-group">
+            <label for="domainurl">Domain URL:</label>
+            <input type="url" id="domainurl" name="domainurl">
+        </div>
+        <div class="form-group">
+            <label for="assignedTo">Assigned To:</label>
+            <select id="assignedTo" name="assignedTo">
+                <!-- Options will be populated via JavaScript -->
+            </select>
+        </div>
+        <button type="submit">Submit</button>
+    </form>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const leadForm = document.getElementById('leadForm');
+            const addServiceButton = document.getElementById('addService');
+            const servicesContainer = document.getElementById('services-container');
+            let serviceIndex = 1;
+
+            // Fetch users to populate the "Assigned To" dropdown
+            fetch('http://localhost:5000/api/users')
+                .then(response => response.json())
+                .then(data => {
+                    const assignedToSelect = document.getElementById('assignedTo');
+                    data.forEach(user => {
+                        const option = document.createElement('option');
+                        option.value = user._id;
+                        option.textContent = user.name;
+                        assignedToSelect.appendChild(option);
+                    });
+                })
+                .catch(error => console.error('Error fetching users:', error));
+
+            addServiceButton.addEventListener('click', function () {
+                const serviceGroup = document.createElement('div');
+                serviceGroup.className = 'service-group';
+                serviceGroup.innerHTML = `
+                    <input type="text" name="services[${serviceIndex}][name]" placeholder="Service Name" required>
+                    <input type="date" name="services[${serviceIndex}][buydate]" placeholder="Buy Date" required>
+                    <input type="date" name="services[${serviceIndex}][expirydate]" placeholder="Expiry Date" required>
+                    <button type="button" class="removeService">Remove</button>
+                `;
+                servicesContainer.appendChild(serviceGroup);
+                serviceIndex++;
+
+                // Add event listener to remove the service group
+                const removeServiceButton = serviceGroup.querySelector('.removeService');
+                removeServiceButton.addEventListener('click', function () {
+                    servicesContainer.removeChild(serviceGroup);
+                    serviceIndex--;
+                });
+            });
+
+            leadForm.addEventListener('submit', function (event) {
+                event.preventDefault();
+
+                const formData = new FormData(leadForm);
+                const data = {};
+                formData.forEach((value, key) => {
+                    if (key.startsWith('services')) {
+                        const matches = key.match(/\[(\d+)\]\[(.+)\]/);
+                        if (matches) {
+                            const index = matches[1];
+                            const field = matches[2];
+                            if (!data.services) {
+                                data.services = [];
+                            }
+                            if (!data.services[index]) {
+                                data.services[index] = {};
+                            }
+                            data.services[index][field] = value;
+                        }
+                    } else {
+                        data[key] = value;
+                    }
+                });
+
+                fetch('http://localhost:5000/api/leads', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(data),
+                })
+                .then(response => response.json())
+                .then(result => {
+                    alert('Lead created successfully!');
+                    leadForm.reset();
+                    servicesContainer.innerHTML = `
+                        <div class="service-group">
+                            <input type="text" name="services[0][name]" placeholder="Service Name" required>
+                            <input type="date" name="services[0][buydate]" placeholder="Buy Date" required>
+                            <input type="date" name="services[0][expirydate]" placeholder="Expiry Date" required>
+                        </div>
+                    `;
+                    serviceIndex = 1;
+                })
+                .catch(error => console.error('Error creating lead:', error));
+            });
+        });
+    </script>
+</body>
+</html>
